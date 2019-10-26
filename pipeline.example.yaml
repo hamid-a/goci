@@ -1,0 +1,31 @@
+port: 8888
+services:
+  - service_one
+  - service_two
+
+token:
+  service_one: "secure_token"
+  frontend: "secure_token"
+
+service_one:
+  pipelines:
+    - pipeline_one
+    - pipeline_two
+  pipeline_one:
+    directory: "/absolute/directory/"
+    commands:
+      - "command 1"
+  pipeline_two:
+    directory: "/absolute/directory/"
+    commands:
+      - "command 1"
+      - "command 2"
+
+service_two:
+  pipelines:
+    - pipeline_one
+  pipeline_one:
+    directory: "/absolute/directory/"
+    commands:
+      - "command 1"
+      - "command 2"
