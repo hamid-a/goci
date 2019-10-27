@@ -1,12 +1,14 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
 	"github.com/labstack/echo"
 	"github.com/labstack/gommon/log"
 	"github.com/spf13/viper"
 	"net/http"
 	"os/exec"
+	"time"
 )
 
 var e = echo.New()
@@ -56,19 +58,23 @@ func runPipeline(service string) {
 
 			cmd := exec.Command("bash", "-c", command)
 			cmd.Dir = dir
-			out, err := cmd.Output()
 
-			e.Logger.Debug(fmt.Printf(
-				"Service: %s, Command: %s, Path: %s, Message: %s",
-				service,
-				command,
-				dir,
-				string(out),
-			))
-
+			var out bytes.Buffer
+			var stderr bytes.Buffer
+			cmd.Stdout = &out
+			cmd.Stderr = &stderr
+			err := cmd.Run()
 			if err != nil {
 				e.Logger.Error(err)
 			}
+			fmt.Printf(
+				"[%s] Service: %s, Command: %s, Path: %s\n%s",
+				time.Now().Format("2006-01-02 15:04:05"),
+				service,
+				command,
+				dir,
+				out.String(),
+			)
 		}
 	}
 }
